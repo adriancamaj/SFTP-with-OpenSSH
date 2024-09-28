@@ -1,0 +1,59 @@
+# SSH Daemon Configuration File
+# =============================
+
+# Port to listen on (default is 22)
+Port 22
+
+# Listen on specific IP addresses (default is to listen on all interfaces)
+# ListenAddress 0.0.0.0
+# ListenAddress ::
+
+# Protocol version (use SSH version 2 only)
+Protocol 2
+
+# Host Keys for protocol version 2
+HostKey /etc/ssh/ssh_host_rsa_key
+HostKey /etc/ssh/ssh_host_ecdsa_key
+HostKey /etc/ssh/ssh_host_ed25519_key
+
+# Logging
+SyslogFacility AUTH
+LogLevel INFO
+
+# Authentication:
+
+# Disable root login for security
+PermitRootLogin no
+
+# Do not allow empty passwords
+PermitEmptyPasswords no
+
+# Disable password authentication (use SSH keys instead)
+PasswordAuthentication no
+
+# Use public key authentication
+PubkeyAuthentication yes
+
+# Authorized keys file
+AuthorizedKeysFile     .ssh/authorized_keys
+
+# Allow only specified users
+# AllowUsers sftpuser
+
+# Use PAM (Pluggable Authentication Modules)
+UsePAM yes
+
+# Subsystem specification
+Subsystem sftp internal-sftp
+
+# Custom Configuration for SFTP Users
+# ===================================
+
+# Match block applies configuration to users in the 'sftp_users' group
+Match Group sftp_users
+    ChrootDirectory /home/%u          # Restrict users to their home directory
+    ForceCommand internal-sftp        # Force the use of SFTP only
+    X11Forwarding no                  # Disable X11 forwarding
+    AllowTcpForwarding no             # Disable TCP forwarding
+
+# End of sshd_config
